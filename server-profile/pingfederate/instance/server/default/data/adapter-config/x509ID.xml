@@ -17,11 +17,7 @@
         <urn:Field name="Include Subject Alternative Name (SAN)">true</urn:Field>
     </urn:AdvancedFields>
     <urn:Tables>
-        <urn:Table name="Constrain Acceptable Root Issuers">
-            <urn:Row defaultRow="false">
-                <urn:Field name="Issuer DN">CN=plinkkoDC, DC=plinkko, DC=com</urn:Field>
-            </urn:Row>
-        </urn:Table>
+        <urn:Table name="Constrain Acceptable Root Issuers"/>
     </urn:Tables>
     <urn:ExtendedContractAttributes>
         <urn:AttributeName>RFC822Name</urn:AttributeName>
@@ -36,12 +32,6 @@
         <urn1:AttributeMap Name="SubjectDN" Type="Adapter" Value="SubjectDN" xmlns:urn1="urn:sourceid.org:saml2:metadata-extension:v2"/>
         <urn1:AttributeMap Name="email" Type="Adapter" Value="email" xmlns:urn1="urn:sourceid.org:saml2:metadata-extension:v2"/>
         <urn1:AttributeMap Name="ClientCertificateChain" Type="Adapter" Value="ClientCertificateChain" xmlns:urn1="urn:sourceid.org:saml2:metadata-extension:v2"/>
-        <urn1:AttributeSource Id="AD" Description="PlilnkkoAD" Type="LDAP" DataSourceId="LDAP-2BCBE93812F6E0D46BD3052E63F557E7309EF1BF" xmlns:urn1="urn:sourceid.org:saml2:metadata-extension:v2">
-            <urn1:Parameter Name="filter" Value="userPrincipalName=${RFC822Name}"/>
-            <urn1:Parameter Name="search_base" Value="dc=plinkko, dc=com"/>
-            <urn1:Parameter Name="search_scope" Value="SUBTREE_SCOPE"/>
-            <urn1:Parameter Name="memberof_nested_group" Value="false"/>
-        </urn1:AttributeSource>
         <urn1:TokenAuthorizationIssuanceCriteria xmlns:urn1="urn:sourceid.org:saml2:metadata-extension:v2"/>
     </urn:AttributeMapping>
 </urn:AdapterConfiguration>
