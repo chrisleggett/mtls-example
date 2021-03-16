@@ -1,0 +1,37 @@
+version: "2.4"
+
+# This server profile used as basis for ping-devop docker-launch
+#-------------------------------------------------------------------------------------
+#- Ping Identity PingFederate getting started demo
+#-
+#-                +---------------+
+#-                | PingFederate  |
+#-                +---------------+
+#-
+#- To access PingFederate Console
+#-
+#-    https://localhost:9999/pingfederate/app
+#-
+#-    Username: administrator
+#-    Password: 2FederateM0re
+#-------------------------------------------------------------------------------------
+
+services:
+  pingfederate:
+    image: docker.io/pingidentity/pingfederate:edge
+    environment:
+      - SERVER_PROFILE_URL=https://github.com/jillbranton-ping/k8repo.git
+      - SERVER_PROFILE_PATH=serverprofiles/pingfederate
+      - PF_ENGINE_PRIVATE_PORT_HTTPS=9031
+      - PF_ENGINE_PUBLIC_PORT_HTTPS=9031
+    env_file:
+      - ${HOME}/.pingidentity/devops
+    ports:
+      - "9031:9031"
+      - "9999:9999"
+      - "9032:9032"
+    networks:
+      - pingnet
+
+networks:
+  pingnet:

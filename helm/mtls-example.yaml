@@ -1,0 +1,93 @@
+############################################################
+# Ping Identity
+#
+############################################################
+
+global:
+  image:
+    tag: "edge"  # Uses images with the "edge" tag
+    pullPolicy: Always
+ ############################################################
+  #  addReleaseNameToResource: Provides global ability to add
+  #                            names to kubernetes resources
+  #      <not-set or any val>: No use of Release.Name ** DEFAULT **
+  #                    append: Appends the Release.Name
+  #                   prepend: Prepends the Release.Name
+  ############################################################
+  addReleaseNameToResource: append
+
+  ############################################################
+  # Ingress
+  #
+  #          ingress.enabled: {true | false}
+  # ingress.addReleaseToHost: {prepend | append | subdomain | none}
+  #    ingress.defaultDomain: Replaces with "_defaultDomain_" in host fields
+  # ingress.defaultTlsSecret: Replaces with "_defaultTlsSecret_" in tls.secretName
+  ############################################################
+  ingress:
+    addReleaseNameToHost: append
+    enabled: true
+    defaultDomain: "ping-devops.com"
+    annotations:
+      kubernetes.io/ingress.class: "nginx-public"
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+
+############################################################
+# Ping DevOps Service Customizations
+#
+# This provides:
+#  - PingFederate Administrative Console with native authentication
+#  - PingFederate Engines clustered with console
+############################################################
+pingfederate-admin:
+  enabled: true
+  envs:
+    SERVER_PROFILE_URL: https://github.com/chrisleggett/mtls-example.git
+    SERVER_PROFILE_PATH: serverprofile/pingfederate
+    PF_ENGINE_PRIVATE_PORT_SEC_HTTPS: "9032"
+    PF_COOKIE_DOMAIN: ".ping-devops.com"
+
+pingfederate-engine:
+  enabled: true
+  envs:
+    SERVER_PROFILE_URL: https://github.com/chrisleggett/mtls-example.git
+    SERVER_PROFILE_PATH: serverprofile/pingfederate
+    PF_ENGINE_PRIVATE_PORT_HTTPS: "9031"
+    PF_ENGINE_PRIVATE_PORT_SEC_HTTPS: "9032"
+    PF_COOKIE_DOMAIN: ".ping-devops.com"
+  services:
+#    https:
+#      servicePort: 9031
+#      containerPort: 9031
+#      ingressPort: 443
+#      dataService: true
+    mtls:
+      servicePort: 9032
+      containerPort: 9032
+      ingressPort: 443
+      dataService: true
+#    clusterbind:
+#      servicePort: 7600
+#      containerPort: 7600
+#      clusterService: true
+#    clusterfail:
+#      servicePort: 7700
+#      containerPort: 7700
+#      clusterService: true
+#    clusterExternalDNSHostname:    
+  ingress:
+    annotations:
+      kubernetes.io/ingress.class: nginx-public-passthrough
+      nginx.ingress.kubernetes.io/service-upstream: "true"
+      nginx.ingress.kubernetes.io/ssl-passthrough: "true"  
+    hosts:
+      - host: pingfederate-tlsauth._defaultDomain_
+        paths:
+        - path: /
+          backend:
+            serviceName: mtls
+      - host: pingfederate-engine._defaultDomain_
+        paths:
+        - path: /
+          backend:
+            serviceName: https
